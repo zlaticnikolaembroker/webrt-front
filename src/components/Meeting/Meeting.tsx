@@ -13,7 +13,7 @@ const Meeting = ({ meetingId }: MeetingProps) => {
     return LocalStorage.getFromLocalStorage(USERNAME_FIELD_NAME);
   }, []);
 
-  if (!meetingId) {
+  if (!meetingId || !meetingId.replaceAll(" ", "").match(/^[0-9]+$/)) {
     return <div>Invalid meeting id value.</div>;
   }
 
