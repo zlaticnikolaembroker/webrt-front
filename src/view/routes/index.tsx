@@ -3,6 +3,8 @@ import { mount, redirect, route } from "navi";
 import JoinMeeting from "../components/JoinMeeting/JoinMeeting";
 import CreateMeeting from "../components/CreateMeeting/CreateMeeting";
 import Meeting from "../components/Meeting/Meeting";
+import Register from "../components/Register/Register";
+import Login from "../components/Login/Login";
 
 const routes = mount({
   "/": redirect("/home"),
@@ -15,6 +17,8 @@ const routes = mount({
       view: <Meeting meetingId={id} />,
     };
   }),
+  "/register": route({ view: <Register /> }),
+  "/login": route({ view: <Login /> }),
 });
 
 export default routes;
