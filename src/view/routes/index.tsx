@@ -1,8 +1,8 @@
 import React from "react";
 import { mount, redirect, route } from "navi";
-import JoinMeeting from "../JoinMeeting/JoinMeeting";
-import CreateMeeting from "../CreateMeeting/CreateMeeting";
-import Meeting from "../Meeting/Meeting";
+import JoinMeeting from "../components/JoinMeeting/JoinMeeting";
+import CreateMeeting from "../components/CreateMeeting/CreateMeeting";
+import Meeting from "../components/Meeting/Meeting";
 
 const routes = mount({
   "/": redirect("/home"),

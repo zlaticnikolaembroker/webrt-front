@@ -4,7 +4,7 @@ import { useNavigation } from "react-navi";
 import {
   LocalStorage,
   USERNAME_FIELD_NAME,
-} from "../../localstorage/LocalStorage";
+} from "../../../localstorage/LocalStorage";
 
 interface FormInput {
   userName: string;

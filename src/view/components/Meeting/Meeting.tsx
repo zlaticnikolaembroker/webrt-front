@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import {
   LocalStorage,
   USERNAME_FIELD_NAME,
-} from "../../localstorage/LocalStorage";
+} from "../../../localstorage/LocalStorage";
 
 export interface MeetingProps {
   meetingId?: string;

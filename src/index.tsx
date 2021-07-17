@@ -2,9 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import Navigation from "./components/Header/Header";
+import Navigation from "./view/components/Header/Header";
 import { Router } from "react-navi";
-import routes from "./components/routes";
+import routes from "./view/routes";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 ReactDOM.render(
