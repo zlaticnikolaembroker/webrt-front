@@ -13,7 +13,7 @@ interface FormErrors {
 }
 
 const Login = () => {
-  const [fromData, setFormData] = useState<FormData>({ showPassword: false });
+  const [formData, setFormData] = useState<FormData>({ showPassword: false });
   const [formErrors, setFormErrors] = useState<FormErrors>({
     email: true,
     password: true,
@@ -48,29 +48,29 @@ const Login = () => {
   const handleEmailChanged = useCallback(
     (newEmail?: string) => {
       setFormData({
-        ...fromData,
+        ...formData,
         email: newEmail,
       });
       validateData({
-        ...fromData,
+        ...formData,
         email: newEmail,
       });
     },
-    [fromData, validateData]
+    [formData, validateData]
   );
 
   const handlePasswordChanged = useCallback(
     (newPassword?: string) => {
       setFormData({
-        ...fromData,
+        ...formData,
         password: newPassword,
       });
       validateData({
-        ...fromData,
+        ...formData,
         password: newPassword,
       });
     },
-    [fromData, validateData]
+    [formData, validateData]
   );
 
   const handleLoginClicked = () => {};
@@ -109,7 +109,7 @@ const Login = () => {
         <Form.Group className="mb-3">
           <Form.Label>Password</Form.Label>
           <Form.Control
-            type={fromData.showPassword ? "text" : "password"}
+            type={formData.showPassword ? "text" : "password"}
             placeholder="Enter password"
             isInvalid={formErrors.password}
             onChange={(event) => {
@@ -123,10 +123,10 @@ const Login = () => {
         <Form.Group className="mb-3 text-center">
           <Form.Check
             type="checkbox"
-            label={fromData.showPassword ? "Hide password" : "Show password"}
+            label={formData.showPassword ? "Hide password" : "Show password"}
             onChange={(event) => {
               setFormData({
-                ...fromData,
+                ...formData,
                 showPassword: event.target.checked,
               });
             }}
