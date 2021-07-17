@@ -1,20 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import Navigation from './components/Header/Header';
-import { Router } from 'react-navi';
-import routes from './components/routes';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import Navigation from "./components/Header/Header";
+import { Router } from "react-navi";
+import routes from "./components/routes";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 ReactDOM.render(
   <React.Fragment>
     <Navigation />
-  <Router routes={routes}>
-  </Router>
+    <Router routes={routes}></Router>
   </React.Fragment>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
