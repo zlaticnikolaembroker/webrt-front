@@ -5,10 +5,11 @@ import CreateMeeting from "../components/CreateMeeting/CreateMeeting";
 import Meeting from "../components/Meeting/Meeting";
 import Register from "../components/Register/Register";
 import Login from "../components/Login/Login";
+import Home from "../components/Home/Home";
 
 const routes = mount({
   "/": redirect("/home"),
-  "/home": route({ view: <h1>Home</h1> }),
+  "/home": route({ view: <Home /> }),
   "/join-meeting": route({ view: <JoinMeeting /> }),
   "/create-meeting": route({ view: <CreateMeeting /> }),
   "/meeting/:id": route((request) => {
