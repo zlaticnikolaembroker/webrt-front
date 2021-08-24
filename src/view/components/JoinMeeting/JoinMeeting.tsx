@@ -17,10 +17,14 @@ interface FormErrors {
 }
 
 const JoinMeeting = () => {
-  const [formData, setFormData] = useState<FormData>({});
+  const username = localStorage.getItem(USERNAME_FIELD_NAME);
+
+  const [formData, setFormData] = useState<FormData>({
+    username: username ?? undefined,
+  });
   const [formErrors, setFormErrors] = useState<FormErrors>({
     meetingID: true,
-    username: true,
+    username: username && username.length > 0 ? false : true,
   });
 
   const validateFormData = useCallback((dataToValidate: FormData) => {
@@ -124,6 +128,7 @@ const JoinMeeting = () => {
               handleUsernameChanged(event.target.value);
             }}
             isInvalid={formErrors.username}
+            defaultValue={username ?? undefined}
           />
           <Form.Control.Feedback type="invalid">
             Please enter username.

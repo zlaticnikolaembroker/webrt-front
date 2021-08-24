@@ -6,10 +6,11 @@ export enum Endpoint {
 
 export interface RegisterUserInput {
     username: string,
+    email: string,
     password: string,
 }
 
 export interface LoginUserInput {
-    username: string,
+    email: string,
     password: string,
 }

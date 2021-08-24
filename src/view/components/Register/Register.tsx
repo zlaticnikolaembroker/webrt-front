@@ -10,6 +10,7 @@ import {
 
 interface FormData {
   email?: string;
+  username?: string;
   password?: string;
   showPassword: boolean;
   repeatedPassword?: string;
@@ -19,6 +20,7 @@ interface FormData {
 interface FormErrors {
   email: boolean;
   password: boolean;
+  username: boolean;
   repeatedPassword: boolean;
   passwordsDoesntMatch: boolean;
   requestError: boolean;
@@ -34,6 +36,7 @@ const Register = () => {
     password: true,
     repeatedPassword: true,
     passwordsDoesntMatch: true,
+    username: true,
     requestError: false,
   });
 
@@ -51,6 +54,7 @@ const Register = () => {
         repeatedPassword: false,
         passwordsDoesntMatch: false,
         requestError: false,
+        username: false,
       };
       if (!isEmailValid(dataToValidate.email)) {
         errors.email = true;
@@ -60,6 +64,12 @@ const Register = () => {
         dataToValidate.password.length === 0
       ) {
         errors.password = true;
+      }
+      if (
+        dataToValidate.username === undefined ||
+        dataToValidate.username.length === 0
+      ) {
+        errors.username = true;
       }
       if (
         dataToValidate.repeatedPassword === undefined ||
@@ -84,6 +94,20 @@ const Register = () => {
       validateData({
         ...formData,
         email: newEmail,
+      });
+    },
+    [formData, validateData]
+  );
+
+  const handleUsernameChanged = useCallback(
+    (newusername?: string) => {
+      setFormData({
+        ...formData,
+        username: newusername,
+      });
+      validateData({
+        ...formData,
+        username: newusername,
       });
     },
     [formData, validateData]
@@ -124,7 +148,8 @@ const Register = () => {
       Endpoint.RegisterUserEndpoint,
       JSON.stringify({
         password: formData.password,
-        username: formData.email,
+        email: formData.email,
+        username: formData.username,
       } as RegisterUserInput)
     );
     if ((response as unknown as PostResponse).error) {
@@ -134,7 +159,7 @@ const Register = () => {
       });
       return;
     }
-    localStorage.setItem(USERNAME_FIELD_NAME, formData.email ?? "username");
+    localStorage.setItem(USERNAME_FIELD_NAME, formData.username ?? "username");
     localStorage.setItem(USER_ID_FIELD_NAME, response.data);
     const event = new Event("register");
     document.dispatchEvent(event);
@@ -173,6 +198,21 @@ const Register = () => {
         </Form.Group>
 
         <Form.Group className="mb-3">
+          <Form.Label>Username</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter username"
+            onChange={(event) => {
+              handleUsernameChanged(event.target.value);
+            }}
+            isInvalid={formErrors.username}
+          />
+          <Form.Control.Feedback type="invalid">
+            Please enter username.
+          </Form.Control.Feedback>
+        </Form.Group>
+
+        <Form.Group className="mb-3">
           <Form.Label>Password</Form.Label>
           <Form.Control
             type={formData.showPassword ? "text" : "password"}
@@ -186,6 +226,7 @@ const Register = () => {
             Please enter password.
           </Form.Control.Feedback>
         </Form.Group>
+
         <Form.Group className="mb-3 text-center">
           <Form.Check
             type="checkbox"
@@ -198,6 +239,7 @@ const Register = () => {
             }}
           />
         </Form.Group>
+
         <Form.Group className="mb-3">
           <Form.Label>Repeat password</Form.Label>
           <Form.Control
@@ -216,6 +258,7 @@ const Register = () => {
               : "Passwords doesn't match."}
           </Form.Control.Feedback>
         </Form.Group>
+
         <Form.Group className="mb-3 text-center">
           <Form.Check
             type="checkbox"
@@ -232,6 +275,7 @@ const Register = () => {
             }}
           />
         </Form.Group>
+
         <Button
           variant="primary"
           type="submit"
@@ -242,6 +286,7 @@ const Register = () => {
         >
           Register
         </Button>
+
         {formErrors.requestError ? (
           <Form.Control.Feedback type="invalid">
             Something went wrong.

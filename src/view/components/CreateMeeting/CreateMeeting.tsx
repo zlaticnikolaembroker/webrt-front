@@ -26,9 +26,14 @@ const CreateMeeting = () => {
     return meetingID;
   }, []);
 
-  const [formData, setFormData] = useState<FormInput>({ userName: "" });
+  const username = localStorage.getItem(USERNAME_FIELD_NAME);
+
+  const [formData, setFormData] = useState<FormInput>({
+    userName: username ?? "",
+  });
+
   const [formDataError, setFormDataError] = useState<FormError>({
-    userName: true,
+    userName: username && username.length > 0 ? false : true,
   });
 
   const checkFormData = useCallback((formData: FormInput) => {
@@ -81,6 +86,7 @@ const CreateMeeting = () => {
                 userName: e.target.value,
               });
             }}
+            defaultValue={username ?? undefined}
           />
           <Form.Control.Feedback type="invalid">
             Please enter username.

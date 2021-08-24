@@ -93,7 +93,7 @@ const Login = () => {
       Endpoint.LoginUserEndpoint,
       JSON.stringify({
         password: formData.password,
-        username: formData.email,
+        email: formData.email,
       } as LoginUserInput)
     );
     if ((response as unknown as PostResponse).error) {
@@ -103,9 +103,15 @@ const Login = () => {
       });
       return;
     }
-    if (response.data === "true") {
-      localStorage.setItem(USERNAME_FIELD_NAME, formData.email ?? "username");
-      localStorage.setItem(USER_ID_FIELD_NAME, response.data);
+    if (response.data !== "null") {
+      localStorage.setItem(
+        USERNAME_FIELD_NAME,
+        JSON.parse(response.data).username ?? "username"
+      );
+      localStorage.setItem(
+        USER_ID_FIELD_NAME,
+        JSON.parse(response.data).id ?? "id"
+      );
       const event = new Event("login");
       document.dispatchEvent(event);
       navigation.navigate("home");
@@ -116,8 +122,6 @@ const Login = () => {
       invalidLogin: true,
     });
   };
-
-  console.log(formErrors);
 
   return (
     <div
