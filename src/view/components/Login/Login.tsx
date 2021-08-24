@@ -1,5 +1,12 @@
 import React, { useCallback, useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import { useNavigation } from "react-navi";
+import { Endpoint, LoginUserInput } from "../../../http";
+import post, { PostResponse } from "../../../http/Http";
+import {
+  USERNAME_FIELD_NAME,
+  USER_ID_FIELD_NAME,
+} from "../../../localstorage/LocalStorage";
 
 interface FormData {
   email?: string;
@@ -10,6 +17,8 @@ interface FormData {
 interface FormErrors {
   email: boolean;
   password: boolean;
+  requestError: boolean;
+  invalidLogin: boolean;
 }
 
 const Login = () => {
@@ -17,6 +26,8 @@ const Login = () => {
   const [formErrors, setFormErrors] = useState<FormErrors>({
     email: true,
     password: true,
+    requestError: false,
+    invalidLogin: false,
   });
 
   const isEmailValid = useCallback((email?: string): boolean => {
@@ -30,6 +41,8 @@ const Login = () => {
       const errors: FormErrors = {
         email: false,
         password: false,
+        requestError: false,
+        invalidLogin: false,
       };
       if (!isEmailValid(dataToValidate.email)) {
         errors.email = true;
@@ -73,7 +86,38 @@ const Login = () => {
     [formData, validateData]
   );
 
-  const handleLoginClicked = () => {};
+  const navigation = useNavigation();
+
+  const handleLoginClicked = async () => {
+    const response = await post(
+      Endpoint.LoginUserEndpoint,
+      JSON.stringify({
+        password: formData.password,
+        username: formData.email,
+      } as LoginUserInput)
+    );
+    if ((response as unknown as PostResponse).error) {
+      setFormErrors({
+        ...formErrors,
+        requestError: true,
+      });
+      return;
+    }
+    if (response.data === "true") {
+      localStorage.setItem(USERNAME_FIELD_NAME, formData.email ?? "username");
+      localStorage.setItem(USER_ID_FIELD_NAME, response.data);
+      const event = new Event("login");
+      document.dispatchEvent(event);
+      navigation.navigate("home");
+      return;
+    }
+    setFormErrors({
+      ...formErrors,
+      invalidLogin: true,
+    });
+  };
+
+  console.log(formErrors);
 
   return (
     <div
@@ -105,7 +149,6 @@ const Login = () => {
             Please enter valid email.
           </Form.Control.Feedback>
         </Form.Group>
-
         <Form.Group className="mb-3">
           <Form.Label>Password</Form.Label>
           <Form.Control
@@ -142,6 +185,14 @@ const Login = () => {
         >
           Login
         </Button>
+        <Form.Group className="mb-3">
+          {formErrors.requestError ? (
+            <Form.Label color={"red"}>Something went wrong.</Form.Label>
+          ) : null}
+          {formErrors.invalidLogin ? (
+            <Form.Label color={"red"}>Invalid login.</Form.Label>
+          ) : null}
+        </Form.Group>
       </Form>
     </div>
   );

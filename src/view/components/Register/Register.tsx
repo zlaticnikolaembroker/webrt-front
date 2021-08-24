@@ -1,5 +1,12 @@
 import React, { useCallback, useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import { useNavigation } from "react-navi";
+import { Endpoint, RegisterUserInput } from "../../../http";
+import post, { PostResponse } from "../../../http/Http";
+import {
+  USERNAME_FIELD_NAME,
+  USER_ID_FIELD_NAME,
+} from "../../../localstorage/LocalStorage";
 
 interface FormData {
   email?: string;
@@ -14,6 +21,7 @@ interface FormErrors {
   password: boolean;
   repeatedPassword: boolean;
   passwordsDoesntMatch: boolean;
+  requestError: boolean;
 }
 
 const Register = () => {
@@ -26,6 +34,7 @@ const Register = () => {
     password: true,
     repeatedPassword: true,
     passwordsDoesntMatch: true,
+    requestError: false,
   });
 
   const isEmailValid = useCallback((email?: string): boolean => {
@@ -41,6 +50,7 @@ const Register = () => {
         password: false,
         repeatedPassword: false,
         passwordsDoesntMatch: false,
+        requestError: false,
       };
       if (!isEmailValid(dataToValidate.email)) {
         errors.email = true;
@@ -107,7 +117,29 @@ const Register = () => {
     [formData, validateData]
   );
 
-  const handleRegisterClicked = useCallback(() => {}, []);
+  const navigation = useNavigation();
+
+  const handleRegisterClicked = useCallback(async () => {
+    const response = await post(
+      Endpoint.RegisterUserEndpoint,
+      JSON.stringify({
+        password: formData.password,
+        username: formData.email,
+      } as RegisterUserInput)
+    );
+    if ((response as unknown as PostResponse).error) {
+      setFormErrors({
+        ...formErrors,
+        requestError: true,
+      });
+      return;
+    }
+    localStorage.setItem(USERNAME_FIELD_NAME, formData.email ?? "username");
+    localStorage.setItem(USER_ID_FIELD_NAME, response.data);
+    const event = new Event("register");
+    document.dispatchEvent(event);
+    navigation.navigate("home");
+  }, [formData, formErrors, navigation]);
 
   return (
     <div
@@ -210,6 +242,11 @@ const Register = () => {
         >
           Register
         </Button>
+        {formErrors.requestError ? (
+          <Form.Control.Feedback type="invalid">
+            Something went wrong.
+          </Form.Control.Feedback>
+        ) : null}
       </Form>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useState } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import {
   LocalStorage,
@@ -6,9 +6,19 @@ import {
 } from "../../../localstorage/LocalStorage";
 
 const Navigation = () => {
-  const userId = useMemo(() => {
+  const getUserId = useCallback((): string | null => {
     return LocalStorage.getFromLocalStorage(USER_ID_FIELD_NAME);
   }, []);
+
+  const [userId, setUserid] = useState<string | null>(getUserId());
+
+  document.addEventListener("login", () => {
+    setUserid(getUserId());
+  });
+
+  document.addEventListener("register", () => {
+    setUserid(getUserId());
+  });
 
   return (
     <Navbar bg="primary" variant="light" sticky="top">
