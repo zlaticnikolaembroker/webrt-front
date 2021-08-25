@@ -36,6 +36,7 @@ const Navigation = () => {
             </React.Fragment>
           ) : (
             <React.Fragment>
+              <Nav.Link href="/update-profile">Update profile</Nav.Link>
               <Nav.Link
                 href="/home"
                 onClick={() => {

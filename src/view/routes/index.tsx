@@ -6,6 +6,7 @@ import Meeting from "../components/Meeting/Meeting";
 import Register from "../components/Register/Register";
 import Login from "../components/Login/Login";
 import Home from "../components/Home/Home";
+import UpdateProfile from "../components/UpdateProfile/UpdateProfile";
 
 const routes = mount({
   "/": redirect("/home"),
@@ -20,6 +21,7 @@ const routes = mount({
   }),
   "/register": route({ view: <Register /> }),
   "/login": route({ view: <Login /> }),
+  "/update-profile": route({ view: <UpdateProfile /> }),
 });
 
 export default routes;
