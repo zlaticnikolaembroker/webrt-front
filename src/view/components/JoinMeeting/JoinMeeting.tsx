@@ -2,6 +2,12 @@ import React, { useCallback, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useNavigation } from "react-navi";
 import {
+  Endpoint,
+  CreateMeetingInput,
+  GetMeetingByNumberInput,
+} from "../../../http";
+import post, { PostResponse } from "../../../http/Http";
+import {
   LocalStorage,
   USERNAME_FIELD_NAME,
 } from "../../../localstorage/LocalStorage";
@@ -14,6 +20,7 @@ interface FormData {
 interface FormErrors {
   meetingID: boolean;
   username: boolean;
+  requestFailed: boolean;
 }
 
 const JoinMeeting = () => {
@@ -25,12 +32,14 @@ const JoinMeeting = () => {
   const [formErrors, setFormErrors] = useState<FormErrors>({
     meetingID: true,
     username: username && username.length > 0 ? false : true,
+    requestFailed: false,
   });
 
   const validateFormData = useCallback((dataToValidate: FormData) => {
     let newFormErrorValue: FormErrors = {
       meetingID: false,
       username: false,
+      requestFailed: false,
     };
     if (
       dataToValidate.meetingID === undefined ||
@@ -51,12 +60,51 @@ const JoinMeeting = () => {
 
   const navigation = useNavigation();
 
-  const handleJoinMeetingClicked = useCallback(() => {
+  const handleJoinMeetingClicked = useCallback(async () => {
     if (!formErrors.username && !formErrors.meetingID && formData.username) {
-      LocalStorage.setToLocalStorage(USERNAME_FIELD_NAME, formData.username);
-      navigation.navigate(
-        `/meeting/${formData.meetingID?.replaceAll(" ", "")}`
+      const response = await post(
+        Endpoint.GetMeetingByNumberEndpoint,
+        JSON.stringify({
+          meetingNumber: Number(formData.meetingID),
+        } as GetMeetingByNumberInput)
       );
+
+      if ((response as unknown as PostResponse).error) {
+        setFormErrors({
+          ...formErrors,
+          requestFailed: true,
+        });
+        return;
+      }
+      try {
+        const result = JSON.parse(response.data);
+
+        if (result.id) {
+          LocalStorage.setToLocalStorage(
+            USERNAME_FIELD_NAME,
+            formData.username
+          );
+          navigation.navigate(
+            `/meeting/${formData.meetingID?.replaceAll(" ", "")}`
+          );
+        } else {
+          setFormErrors({
+            ...formErrors,
+            requestFailed: true,
+          });
+        }
+
+        LocalStorage.setToLocalStorage(USERNAME_FIELD_NAME, formData.username);
+        navigation.navigate(
+          `/meeting/${formData.meetingID?.replaceAll(" ", "")}`
+        );
+      } catch (err) {
+        setFormErrors({
+          ...formErrors,
+          requestFailed: true,
+        });
+        return;
+      }
     }
   }, [navigation, formData, formErrors]);
 
@@ -134,6 +182,7 @@ const JoinMeeting = () => {
             Please enter username.
           </Form.Control.Feedback>
         </Form.Group>
+
         <Button
           variant="primary"
           type="submit"
@@ -144,6 +193,14 @@ const JoinMeeting = () => {
         >
           Join meeting
         </Button>
+
+        <Form.Group className="mb-3">
+          {formErrors.requestFailed ? (
+            <Form.Label color={"red"}>
+              Something went wrong, probably meeting doesn't exist.
+            </Form.Label>
+          ) : null}
+        </Form.Group>
       </Form>
     </div>
   );

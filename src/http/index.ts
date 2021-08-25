@@ -3,6 +3,8 @@ export enum Endpoint {
   LoginUserEndpoint = "/login_user",
   UpdateUserEndpoint = "/update_user",
   GetUserByIdEndpoint = "/get_user_by_id",
+  CreateMeetingEndpoint = "/create_meeting",
+  GetMeetingByNumberEndpoint = "/get_meeting_by_number",
 }
 
 export interface RegisterUserInput {
@@ -26,4 +28,12 @@ export interface UpdateUserInput {
     username: string,
     email: string,
     password: string,
+}
+
+export interface CreateMeetingInput {
+  meetingNumber: number,
+}
+
+export interface GetMeetingByNumberInput {
+  meetingNumber: number,
 }
