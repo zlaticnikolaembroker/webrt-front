@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import { Form, Button } from "react-bootstrap";
 import { useNavigation } from "react-navi";
 import { Endpoint, RegisterUserInput } from "../../../http";
@@ -7,6 +7,7 @@ import {
   USERNAME_FIELD_NAME,
   USER_ID_FIELD_NAME,
 } from "../../../localstorage/LocalStorage";
+import Socket from "../../../http/Socket";
 
 interface FormData {
   email?: string;
@@ -39,6 +40,14 @@ const Register = () => {
     username: true,
     requestError: false,
   });
+
+  const [connected, setConnected] = useState(false);
+
+  const socket = useMemo(() => {
+      const ws = new WebSocket('ws://localhost:4000');
+
+      return new Socket(ws);
+  },[]);
 
   const isEmailValid = useCallback((email?: string): boolean => {
     const regex =
@@ -166,6 +175,41 @@ const Register = () => {
     navigation.navigate("home");
   }, [formData, formErrors, navigation]);
 
+    const onConnect = useCallback(() => {
+        console.log("connected");
+        setConnected(true)
+    }, []);
+
+    // onDisconnect sets the state to false indicating the socket has been
+    //    disconnected.
+
+    const onDisconnect = useCallback(() => {
+        setConnected(false)
+    }, []);
+
+    // helloFromClient is an event emitter that sends a hello message to the backend
+    //    server on the socket.
+    const helloFromClient = useCallback(() => {
+        console.log('saying hello...');
+        socket.emit('helloFromClient', 'hello server!');
+    }, [socket]);
+
+    // helloFromServer is an event listener/consumer that handles hello messages
+    //    from the backend server on the socket.
+    const helloFromServer = useCallback((data) => {
+        console.log('hello from server! message:', data);
+    }, []);
+
+  useEffect(() => {
+      // handle connect and discconnect events.
+      socket.on('connect', onConnect);
+      socket.on('disconnect', onDisconnect);
+
+      /* EVENT LISTENERS */
+      // event listener to handle 'hello' from a server
+      socket.on('helloFromServer', helloFromServer);
+  }, [onConnect, onDisconnect, helloFromServer, socket])
+
   return (
     <div
       style={{
@@ -287,7 +331,13 @@ const Register = () => {
           Register
         </Button>
 
-        {formErrors.requestError ? (
+          <button onClick={(e) => {
+              e.preventDefault();
+              helloFromClient(); }}>
+              Say Hello to Backend Server
+          </button>
+          {connected ? <div>Connected</div> : <div>not connected</div>}
+          {formErrors.requestError ? (
           <Form.Control.Feedback type="invalid">
             Something went wrong.
           </Form.Control.Feedback>
