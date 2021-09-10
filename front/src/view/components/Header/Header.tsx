@@ -25,8 +25,7 @@ const Navigation = () => {
       <Container>
         <Navbar.Brand href="/home">WebRTC</Navbar.Brand>
         <Nav className="me-auto">
-          <Nav.Link href="/create-meeting">Create meeting</Nav.Link>
-          <Nav.Link href="/join-meeting">Join meeting</Nav.Link>
+          <Nav.Link href="/meeting">Join meeting</Nav.Link>
         </Nav>
         <Nav>
           {!userId ? (

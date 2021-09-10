@@ -33,13 +33,12 @@ const Home = () => {
       <h1>WELCOME! {userId && username ? username : null}</h1>
       <h2>This is a free application for online meetings.</h2>
       <h3>
-        You can <a href="/join-meeting">join a meeting</a> or{" "}
-        <a href="/create-meeting">create a new meeting</a>.
+        You can <a href="/meeting">join a meeting</a>.
       </h3>
       {!userId ? (
         <h3>
           For easier application usage you can{" "}
-          <a href="/register">register an account</a> or if you already have an
+          <a href="/register">register an account</a>, or if you already have an
           account you can <a href="/login">login</a>.
         </h3>
       ) : null}
