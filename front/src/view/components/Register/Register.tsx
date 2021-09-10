@@ -286,12 +286,6 @@ const Register = () => {
                 >
                     Register
                 </Button>
-
-                <button onClick={(e) => {
-                    e.preventDefault();
-                }}>
-                    Say Hello to Backend Server
-                </button>
                 {formErrors.requestError ? (
                     <Form.Control.Feedback type="invalid">
                         Something went wrong.
